@@ -1,25 +1,46 @@
-import logo from './logo.svg';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
+import Weather from './Weather';
 
 function App() {
+  const [lat, setLat] = useState(0);
+  const [lng, setLng] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        setLat(position.coords.latitude);
+        setLng(position.coords.longitude);
+        setIsLoading(false)
+      }, (error) => {
+        alert(error);
+      })
+    }
+    else {
+      alert('Your browser does not support geolocation')
+    }
+    
+      
+    
+  }, []) 
+  
+  if (isLoading) {
+    return <p>Loading...</p>
+  } 
+  else {  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+      <div style={{margin: '100px'}}>
+        <h3> Sijaintisi on </h3> 
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          {lat.toFixed(3)},
+          {lng.toFixed(3)}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+        <Weather lat={lat} lng={lng} />
+      </div>
+   );
+  }
 }
 
 export default App;
